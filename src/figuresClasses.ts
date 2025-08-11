@@ -10,33 +10,34 @@ export interface Figure {
 export class Triangle implements Figure {
   shape: ShapeType = 'triangle';
 
-  color: ColorType;
-
-  a: number;
-
-  b: number;
-
-  c: number;
-
-  constructor(color: ColorType, a: number, b: number, c: number) {
-    if (a <= 0 || b <= 0 || c <= 0) {
-      throw new Error('All sides must be positive numbers.');
+  constructor(
+    public color: ColorType,
+    public readonly a: number,
+    public readonly b: number,
+    public readonly c: number
+  ) {
+    if (a <= 0) {
+      throw new Error(`Side 'a' must be a positive number, but got ${a}.`);
+    }
+    if (b <= 0) {
+      throw new Error(`Side 'b' must be a positive number, but got ${b}.`);
+    }
+    if (c <= 0) {
+      throw new Error(`Side 'c' must be a positive number, but got ${c}.`);
     }
 
-    if (a + b <= c || a + c <= b || b + c <= a) {
-      throw new Error('These sides cannot form a triangle.');
+    const longest = Math.max(a, b, c);
+    const sumOthers = a + b + c - longest;
+    if (longest >= sumOthers) {
+      throw new Error(
+        `Invalid triangle: the longest side (${longest}) is greater than or equal to the sum of the other two sides (${sumOthers}).`
+      );
     }
-
-    this.color = color;
-    this.a = a;
-    this.b = b;
-    this.c = c;
   }
 
   getArea(): number {
     const s = (this.a + this.b + this.c) / 2;
     const area = Math.sqrt(s * (s - this.a) * (s - this.b) * (s - this.c));
-
     return Math.floor(area * 100) / 100;
   }
 }
@@ -44,22 +45,14 @@ export class Triangle implements Figure {
 export class Circle implements Figure {
   shape: ShapeType = 'circle';
 
-  color: ColorType;
-
-  radius: number;
-
-  constructor(color: ColorType, radius: number) {
+  constructor(public color: ColorType, public readonly radius: number) {
     if (radius <= 0) {
-      throw new Error('Radius must be a positive number.');
+      throw new Error(`Radius must be a positive number, but got ${radius}.`);
     }
-
-    this.color = color;
-    this.radius = radius;
   }
 
   getArea(): number {
     const area = Math.PI * this.radius ** 2;
-
     return Math.floor(area * 100) / 100;
   }
 }
@@ -67,25 +60,21 @@ export class Circle implements Figure {
 export class Rectangle implements Figure {
   shape: ShapeType = 'rectangle';
 
-  color: ColorType;
-
-  width: number;
-
-  height: number;
-
-  constructor(color: ColorType, width: number, height: number) {
-    if (width <= 0 || height <= 0) {
-      throw new Error('Width and height must be positive numbers.');
+  constructor(
+    public color: ColorType,
+    public readonly width: number,
+    public readonly height: number
+  ) {
+    if (width <= 0) {
+      throw new Error(`Width must be a positive number, but got ${width}.`);
     }
-
-    this.color = color;
-    this.width = width;
-    this.height = height;
+    if (height <= 0) {
+      throw new Error(`Height must be a positive number, but got ${height}.`);
+    }
   }
 
   getArea(): number {
     const area = this.width * this.height;
-
     return Math.floor(area * 100) / 100;
   }
 }
@@ -93,4 +82,3 @@ export class Rectangle implements Figure {
 export function getInfo(figure: Figure): string {
   return `A ${figure.color} ${figure.shape} - ${figure.getArea()}`;
 }
-// add for ai
